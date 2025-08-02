@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>给你的特别惊喜</title>
+    <style>
+        /* 基础设置 */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            perspective: 1000px;
+        }
+
+        /* 魔法星空背景 */
+        .magic-space {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: shoot linear infinite;
+        }
+
+        @keyframes shoot {
+            0% { transform: translateX(0) translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateX(100vw) translateY(100vh); opacity: 0; }
+        }
+
+        /* 主容器 */
+        .love-box {
+            position: relative;
+            width: 80vw;
+            max-width: 500px;
+            height: 70vh;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 10;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
+            50% { transform: translateY(-20px) rotateX(5deg) rotateY(5deg); }
+        }
+
+        /* 3D水晶爱心 */
+        .crystal-heart {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            animation: heartBeat 2s ease infinite, rotate3d 20s linear infinite;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 20px rgba(255, 20, 147, 0.7));
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes rotate3d {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        .heart-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 20, 147, 0.7);
+            clip-path: path('M10,30 Q25,0 40,30 Q55,60 30,80 Q5,60 10,30 Z');
+            transform: rotate(45deg) translateZ(var(--tz));
+            border-radius: 10px;
+            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .heart-layer:nth-child(1) { --tz: 0px; }
+        .heart-layer:nth-child(2) { --tz: 20px; }
+        .heart-layer:nth-child(3) { --tz: 40px; }
+        .heart-layer:nth-child(4) { --tz: 60px; }
+
+        /* 文字效果 */
+        .love-message {
+            color: white;
+            font-size: 2.2rem;
+            text-align: center;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.8),
+                         0 0 20px rgba(255, 105, 180, 0.6),
+                         0 0 30px rgba(255, 105, 180, 0.4);
+            transition: all 0.5s;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* 互动按钮 */
+        .magic-button {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #ff0099, #ff0066);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.5);
+            position: relative;
+            overflow: hidden;
+            z-index: 5;
+            margin-top: 20px;
+        }
+
+        .magic-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 102, 0.8);
+        }
+
+        .magic-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+            z-index: -1;
+        }
+
+        @keyframes shine {
+            0% { left: -50%; }
+            100% { left: 150%; }
+        }
+
+        /* 隐藏的惊喜内容 */
+        .surprise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s;
+            z-index: 20;
+            backdrop-filter: blur(5px);
+        }
+
+        .surprise.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .surprise-content {
+            max-width: 80%;
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .close-surprise {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-surprise:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* 漂浮元素 */
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatElement linear infinite;
+        }
+
+        @keyframes floatElement {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* 点击特效 */
+        .click-effect {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            z-index: 15;
+            animation: clickExpand 0.5s forwards;
+            transform: scale(0);
+        }
+
+        @keyframes clickExpand {
+            100% { transform: scale(10); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 魔法星空背景 -->
+    <div class="magic-space" id="magicSpace"></div>
+
+    <!-- 主容器 -->
+    <div class="love-box">
+        <!-- 漂浮元素 -->
+        <div id="floatingElements"></div>
+
+        <!-- 3D水晶爱心 -->
+        <div class="crystal-heart">
+            <div class="heart-layer"></div>
+            <div class="heart-layer"></div>
+            <div class="heart-layer"></div>
+            <div class="heart-layer"></div>
+        </div>
+
+        <!-- 文字消息 -->
+        <div class="love-message" id="loveMessage">亲爱的，我有话对你说</div>
+
+        <!-- 魔法按钮 -->
+        <button class="magic-button" id="magicButton">点击查看心意</button>
+
+        <!-- 隐藏的惊喜 -->
+        <div class="surprise" id="surprise">
+            <div class="surprise-content">
+                <h2>惊喜！</h2>
+                <p>其实我偷偷准备了这个页面很久了...</p>
+                <p>每次看到你，我的心就像这个小爱心一样跳动不停</p>
+                <p>你愿意和我一起创造更多美好的回忆吗？</p>
+                <p>❤️ ❤️ ❤️</p>
+            </div>
+            <button class="close-surprise" id="closeSurprise">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 创建星空背景
+        function createMagicSpace() {
+            const space = document.getElementById('magicSpace');
+            
+            // 创建静态星星
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'shooting-star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.opacity = Math.random() * 0.8 + 0.2;
+                star.style.animationDuration = Math.random() * 10 + 5 + 's';
+                star.style.animationDelay = Math.random() * 10 + 's';
+                space.appendChild(star);
+            }
+            
+            // 创建流星
+            setInterval(() => {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                shootingStar.style.left = Math.random() * 20 + 'vw';
+                shootingStar.style.top = Math.random() * 20 + 'vh';
+                shootingStar.style.width = Math.random() * 2 + 1 + 'px';
+                shootingStar.style.height = shootingStar.style.width;
+                shootingStar.style.animationDuration = Math.random() * 2 + 1 + 's';
+                space.appendChild(shootingStar);
+                
+                setTimeout(() => {
+                    shootingStar.remove();
+                }, 3000);
+            }, 1000);
+        }
+
+        // 创建漂浮元素
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            const shapes = ['❤️', '✨', '🌟', '💖', '🥰', '💕', '💘'];
+            
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.fontSize = Math.random() * 20 + 10 + 'px';
+                element.style.animationDuration = Math.random() * 20 + 10 + 's';
+                element.style.animationDelay = Math.random() * 5 + 's';
+                element.style.opacity = Math.random() * 0.5 + 0.3;
+                container.appendChild(element);
+            }
+        }
+
+        // 点击特效
+        document.addEventListener('click', function(e) {
+            const clickEffect = document.createElement('div');
+            clickEffect.className = 'click-effect';
+            clickEffect.style.left = e.clientX + 'px';
+            clickEffect.style.top = e.clientY + 'px';
+            clickEffect.style.backgroundColor = `hsl(${Math.random() * 60 + 330}, 100%, 70%)`;
+            document.body.appendChild(clickEffect);
+            
+            setTimeout(() => {
+                clickEffect.remove();
+            }, 500);
+        });
+
+        // 消息轮换
+        const messages = [
+            "你是我生命中最美的风景",
+            "每一天都想和你一起度过",
+            "你的笑容照亮了我的世界",
+            "我想和你一起看遍世间美好",
+            "你让平凡的日子变得特别",
+            "我的心只为你跳动",
+            "遇见你是我最大的幸运"
+        ];
+        
+        const loveMessage = document.getElementById('loveMessage');
+        let messageIndex = 0;
+        
+        setInterval(() => {
+            messageIndex = (messageIndex + 1) % messages.length;
+            loveMessage.textContent = messages[messageIndex];
+        }, 3000);
+
+        // 惊喜按钮交互
+        const magicButton = document.getElementById('magicButton');
+        const surprise = document.getElementById('surprise');
+        const closeSurprise = document.getElementById('closeSurprise');
+        
+        magicButton.addEventListener('click', function() {
+            surprise.classList.add('active');
+            
+            // 创建爱心爆炸效果
+            createHeartExplosion();
+        });
+        
+        closeSurprise.addEventListener('click', function() {
+            surprise.classList.remove('active');
+        });
+
+        // 创建爱心爆炸效果
+        function createHeartExplosion() {
+            const hearts = ['❤️', '💖', '💘', '💕', '💓', '💗', '💙', '💚', '💛', '💜'];
+            
+            for (let i = 0; i < 30; i++) {
+                const heart = document.createElement('div');
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.position = 'absolute';
+                heart.style.left = '50%';
+                heart.style.top = '50%';
+                heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+                heart.style.transform = 'translate(-50%, -50%)';
+                heart.style.opacity = '0';
+                heart.style.animation = `heartExplode ${Math.random() * 2 + 1}s forwards`;
+                document.body.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 2000);
+            }
+            
+            // 动态添加动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes heartExplode {
+                    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                    10% { opacity: 1; }
+                    100% { 
+                        transform: translate(
+                            ${Math.random() * 400 - 200}px, 
+                            ${Math.random() * 400 - 200}px
+                        ) scale(${Math.random() * 0.5 + 0.5}); 
+                        opacity: 0; 
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                style.remove();
+            }, 2000);
+        }
+
+        // 初始化
+        createMagicSpace();
+        createFloatingElements();
+        
+        // 页面加载动画
+        setTimeout(() => {
+            document.querySelector('.love-box').style.opacity = '1';
+        }, 500);
+    </script>
+</body>
+</html>
